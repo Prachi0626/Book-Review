@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Review Website</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f0e4d7; /* Light brown background color */
+            color: #000; /* Black text color */
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        section {
+            margin: 20px 0;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .book-form input,
+        .book-form textarea,
+        .book-form select,
+        .book-form button {
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .book-form button {
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .book-form button:hover {
+            background-color: #217dbb;
+        }
+
+        .reviews, .recommendations {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .review-card, .recommendation-card {
+            width: 48%;
+            padding: 10px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Book Review Website</h1>
+    </header>
+
+    <section class="book-form">
+        <h2>Write a Book Review</h2>
+        <label for="bookTitle">Book Title:</label>
+        <input type="text" id="bookTitle" required>
+
+        <label for="author">Author:</label>
+        <input type="text" id="author" required>
+
+        <label for="rating">Rating:</label>
+        <select id="rating">
+            <option value="5">5 stars</option>
+            <option value="4">4 stars</option>
+            <option value="3">3 stars</option>
+            <option value="2">2 stars</option>
+            <option value="1">1 star</option>
+        </select>
+
+        <label for="review">Your Review:</label>
+        <textarea id="review" rows="4" required></textarea>
+
+        <button onclick="submitReview()">Submit Review</button>
+    </section>
+
+    <section class="reviews">
+        <h2>Book Reviews</h2>
+        <div id="reviewsContainer"></div>
+    </section>
+
+    <section>
+        <h2>Characters</h2>
+        <label for="favoriteCharacter">Favorite Character:</label>
+        <input type="text" id="favoriteCharacter">
+
+        <label for="hatedCharacter">Hated Character:</label>
+        <input type="text" id="hatedCharacter">
+
+        <button onclick="submitCharacterFeedback()">Submit Feedback</button>
+    </section>
+
+    <section class="recommendations">
+        <h2>Book Recommendations</h2>
+        <div id="recommendationsContainer"></div>
+    </section>
+    <section class="book-form">
+        <h2>Recommend a Book</h2>
+        <label for="recommendedTitle">Book Title:</label>
+        <input type="text" id="recommendedTitle" required>
+
+        <label for="recommendedAuthor">Author:</label>
+        <input type="text" id="recommendedAuthor" required>
+
+        <label for="recommendation">Your Recommendation:</label>
+        <textarea id="recommendation" rows="4" required></textarea>
+
+        <button onclick="submitRecommendation()">Submit Recommendation</button>
+    </section>
+
+    <button onclick="saveAsPDF()">Save as PDF</button>
+
+    <script>
+        function submitReview() {
+            const bookTitle = document.getElementById('bookTitle').value;
+            const author = document.getElementById('author').value;
+            const rating = document.getElementById('rating').value;
+            const review = document.getElementById('review').value;
+
+            if (!bookTitle || !author || !rating || !review) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            const reviewsContainer = document.getElementById('reviewsContainer');
+            const reviewCard = document.createElement('div');
+            reviewCard.classList.add('review-card');
+            reviewCard.innerHTML = `<strong>${bookTitle} by ${author}</strong><br>Rating: ${rating} stars<br>Review: ${review}`;
+            reviewsContainer.appendChild(reviewCard);
+
+            document.getElementById('bookTitle').value = '';
+            document.getElementById('author').value = '';
+            document.getElementById('rating').value = '5';
+            document.getElementById('review').value = '';
+            const reviewData = {
+                bookTitle,
+                author,
+                rating,
+                review,
+            };
+            const reviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            reviews.push(reviewData);
+            localStorage.setItem('reviews', JSON.stringify(reviews));
+        }
+
+        function submitCharacterFeedback() {
+            const favoriteCharacter = document.getElementById('favoriteCharacter').value;
+            const hatedCharacter = document.getElementById('hatedCharacter').value;
+
+            console.log(`Favorite Character: ${favoriteCharacter}, Hated Character: ${hatedCharacter}`);
+        }
+
+        function submitRecommendation() {
+            // Implement this function to handle book recommendations
+            const recommendedTitle = document.getElementById('recommendedTitle').value;
+            const recommendedAuthor = document.getElementById('recommendedAuthor').value;
+            const recommendationMessage = document.getElementById('recommendation').value;
+
+            if (!recommendedTitle || !recommendedAuthor || !recommendationMessage) {
+                alert("Please fill in all fields");
+                return;
+            }
+
+            const recommendationsContainer = document.getElementById('recommendationsContainer');
+            const recommendationCard = document.createElement('div');
+            recommendationCard.classList.add('recommendation-card');
+            recommendationCard.innerHTML = `<strong>${recommendedTitle} by ${recommendedAuthor}</strong><br>Recommendation: ${recommendationMessage}`;
+            recommendationsContainer.appendChild(recommendationCard);
+
+            document.getElementById('recommendedTitle').value = '';
+            document.getElementById('recommendedAuthor').value = '';
+            document.getElementById('recommendation').value = '';
+            const recommendationData = {
+                recommendedTitle,
+                recommendedAuthor,
+                recommendationMessage,
+            };
+
+            const recommendations = JSON.parse(localStorage.getItem('recommendations')) || [];
+            recommendations.push(recommendationData);
+            localStorage.setItem('recommendations', JSON.stringify(recommendations));
+                // Load stored reviews and recommendations on page load
+                function loadStoredData() {
+            const storedReviews = JSON.parse(localStorage.getItem('reviews')) || [];
+            const reviewsContainer = document.getElementById('reviewsContainer');
+            storedReviews.forEach(review => {
+                const reviewCard = document.createElement('div');
+                reviewCard.classList.add('review-card');
+                reviewCard.innerHTML = `<strong>${review.bookTitle} by ${review.author}</strong><br>Rating: ${review.rating} stars<br>Review: ${review.review}`;
+                reviewsContainer.appendChild(reviewCard);
+            });
+
+            const storedRecommendations = JSON.parse(localStorage.getItem('recommendations')) || [];
+            const recommendationsContainer = document.getElementById('recommendationsContainer');
+            storedRecommendations.forEach(recommendation => {
+                const recommendationCard = document.createElement('div');
+                recommendationCard.classList.add('recommendation-card');
+                recommendationCard.innerHTML = `<strong>${recommendation.recommendedTitle} by ${recommendation.recommendedAuthor}</strong><br>Recommendation: ${recommendation.recommendationMessage}`;
+                recommendationsContainer.appendChild(recommendationCard);
+            });
+        }
+        }
+        window.onload = loadStoredData;
+        function saveAsPDF() {
+            // Trigger the browser's print functionality
+            window.print();
+        }
+      </script>
+
+</body>
+</html>
